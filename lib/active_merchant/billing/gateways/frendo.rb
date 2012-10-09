@@ -39,13 +39,13 @@ module ActiveMerchant #:nodoc:
       def add_address(post, options)
         if address = options[:billing_address] || options[:address]
           post['Address'] = {}
-          post['Address']['Address']     = address[:address1].to_s
-          post['Address']['City']        = address[:city].to_s
-          post['Address']['Province']    = address[:state].to_s
-          post['Address']['State']       = address[:state].to_s
-          post['Address']['PostalCode']  = address[:zip].to_s
-          post['Address']['Country']     = address[:country].to_s
-          post['BillingAddress'] = post['Address']
+          post['Address']['Address']          = address[:address1].to_s
+          post['Address']['City']             = address[:city].to_s
+          post['Address']['Province']         = address[:state].to_s
+          post['Address']['State']            = address[:state].to_s
+          post['Address']['PostalCode']       = address[:zip].to_s
+          post['Address']['Country']          = address[:country].to_s
+          post['BillingAddress']              = post['Address']
         end
       end
 
@@ -61,18 +61,18 @@ module ActiveMerchant #:nodoc:
 
       def add_invoice(post, money)
         post['Order'] = {}
-        post['Order']['Amount']        = money
-        post['Order']['OrderDate']     = Time.now.strftime('%Y/%m/%d')
-        post['Order']['OrderType']     = 'CC'
+        post['Order']['Amount']               = money
+        post['Order']['OrderDate']            = Time.now.strftime('%Y/%m/%d')
+        post['Order']['OrderType']            = 'CC'
       end
 
       def add_user(post, options)
         post['UserInfo'] = {}
-        post['UserInfo']['FirstName']     = options[:user][:first_name]
-        post['UserInfo']['LastName']      = options[:user][:last_name]
-        post['UserInfo']['PhoneNumber']   = options[:user][:phone]
-        post['UserInfo']['Email']         = options[:user][:email]
-        post['UserInfo']['HostAddress']   = options[:user][:ip]
+        post['UserInfo']['FirstName']         = options[:user][:first_name]
+        post['UserInfo']['LastName']          = options[:user][:last_name]
+        post['UserInfo']['PhoneNumber']       = options[:user][:phone]
+        post['UserInfo']['Email']             = options[:user][:email]
+        post['UserInfo']['HostAddress']       = options[:user][:ip]
       end
 
       def commit(action, parameters)

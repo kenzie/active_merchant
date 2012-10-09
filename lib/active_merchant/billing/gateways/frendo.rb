@@ -51,7 +51,7 @@ module ActiveMerchant #:nodoc:
 
       def add_credit_card(post, creditcard)
         post['CreditCard'] = {}
-        post['CreditCard']['CardType']        = 'VI'
+        post['CreditCard']['CardType']        = brand(creditcard)
         post['CreditCard']['CardNumber']      = creditcard.number
         post['CreditCard']['CardholderName']  = "#{creditcard.first_name} #{creditcard.last_name}"
         post['CreditCard']['ExpiryMonth']     = creditcard.month.to_s
@@ -90,11 +90,16 @@ module ActiveMerchant #:nodoc:
       end
 
       def message_from(response)
-        response['Errors'][0]['Message']
+        return response['Errors'][0]['Message'] if success?(response)
+        response['Errors'][0]['Message'].split('-')[2].strip.chomp
       end
 
       def success?(response)
         response['Ok'] == '1'
+      end
+
+      def brand(creditcard)
+        return 'VI' if creditcard.brand == 'visa'
       end
 
     end

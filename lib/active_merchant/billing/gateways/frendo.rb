@@ -91,7 +91,7 @@ module ActiveMerchant #:nodoc:
 
       def message_from(response)
         return response['Errors'][0]['Message'] if success?(response)
-        response['Errors'][0]['Message'].split('-')[2].strip.chomp
+        response['Errors'][0]['Message'].split('-').last.strip.chomp
       end
 
       def success?(response)

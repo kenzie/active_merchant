@@ -11,13 +11,15 @@ class RemoteFrendoTest < Test::Unit::TestCase
     @credit_card = credit_card('4715320629000001')
     @declined_card = credit_card('4715320629000002')
 
-    @options = { }
+    @options = {
+      :address => { :address1 => '123 Main St.', :city => 'Southwest Mabou', :state => 'Nova Scotia', :zip => 'B0E 2W0', :country => 'CN' }
+    }
   end
 
   def test_successful_purchase
     assert response = @gateway.purchase(@amount, @credit_card, @options)
     assert_success response
-    assert_equal 'Success', response.message
+    assert_equal 'No errors', response.message
   end
 
   # def test_unsuccessful_purchase

@@ -35,19 +35,11 @@ class FrendoTest < Test::Unit::TestCase
 
   # Place raw successful response from gateway here
   def successful_purchase_response
-    {
-      'Ok' => 'Ok',
-      'Errors' => [ { 'Code' => '0', 'Message' => 'No errors' } ],
-      'Data' => { 'ConfirmationNumber' => '12345678901' }
-    }
+    "{\"Ok\":\"1\",\"Errors\":[{\"Message\":\"No errors\",\"Code\":\"0\"}],\"Data\":{\"ConfirmationNumber\":\"12345678901\"}}"
   end
 
   # Place raw failed response from gateway here
   def failed_purchase_response
-    {
-      'Ok' => '0',
-      'Errors' => [ { 'Code' => '1000', 'Message' => 'An internal error occurred. Please retry the transaction.' } ],
-      'Data' => { }
-    }
+    "{\"Ok\":\"0\",\"Errors\":[{\"Message\":\"An internal error occurred. Please retry the transaction.\",\"Code\":\"1000\"}],\"Data\":null}"
   end
 end

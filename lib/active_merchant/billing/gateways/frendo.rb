@@ -21,7 +21,6 @@ module ActiveMerchant #:nodoc:
         post = {}
         add_charity_type(post)
         add_address(post, options)
-        add_billing_address(post, options)
         add_credit_card(post, creditcard)
         add_invoice(post, money)
         add_user(post, options)
@@ -38,31 +37,25 @@ module ActiveMerchant #:nodoc:
       end
 
       def add_address(post, options)
-        post['Address'] = {}
-        post['Address']['Address']     = '123 Maint St.'
-        post['Address']['City']        = 'Southwest Mabou'
-        post['Address']['Province']    = 'Nova Scotia'
-        post['Address']['PostalCode']  = 'B0E 2W0'
-        post['Address']['State']       = ''
-        post['Address']['Country']     = 'CN'
-      end
-
-      def add_billing_address(post, options)
-        post['BillingAddress'] = {}
-        post['BillingAddress']['Address']     = '123 Maint St.'
-        post['BillingAddress']['City']        = 'Southwest Mabou'
-        post['BillingAddress']['Province']    = 'Nova Scotia'
-        post['BillingAddress']['PostalCode']  = 'B0E 2W0'
-        post['BillingAddress']['State']       = ''
-        post['BillingAddress']['Country']     = 'CN'
+        if address = options[:billing_address] || options[:address]
+          post['Address'] = {}
+          post['Address']['Address']     = address[:address1].to_s
+          post['Address']['City']        = address[:city].to_s
+          post['Address']['Province']    = address[:state].to_s
+          post['Address']['State']       = address[:state].to_s
+          post['Address']['PostalCode']  = address[:zip].to_s
+          post['Address']['Country']     = address[:country].to_s
+          post['BillingAddress'] = post['Address']
+        end
       end
 
       def add_credit_card(post, creditcard)
         post['CreditCard'] = {}
+        post['CreditCard']['CardType']        = 'VI'
         post['CreditCard']['CardNumber']      = creditcard.number
         post['CreditCard']['CardholderName']  = "#{creditcard.first_name} #{creditcard.last_name}"
-        post['CreditCard']['ExpiryMonth']     = creditcard.month
-        post['CreditCard']['ExpiryYear']      = creditcard.year
+        post['CreditCard']['ExpiryMonth']     = creditcard.month.to_s
+        post['CreditCard']['ExpiryYear']      = creditcard.year.to_s
         post['CreditCard']['Cvv']             = creditcard.verification_value if creditcard.verification_value?
       end
 
@@ -83,32 +76,25 @@ module ActiveMerchant #:nodoc:
       end
 
       def commit(action, parameters)
-        response = ssl_post(test? ? self.test_url+action : self.live_url+action, parameters.to_json)
+        response = JSON.parse(ssl_post(test? ? self.test_url+action : self.live_url+action, parameters.to_json))
 
         Response.new(success?(response),
                      message_from(response),
-                     parse(response),
+                     response,
                      :test => test?,
-                     :authorization => response['Data']['ConfirmationNumber'])
+                     :authorization => authorization_from(response))
+      end
+
+      def authorization_from(response)
+        response['Data']['ConfirmationNumber'] if response['Data'] && response['Data']['ConfirmationNumber']
       end
 
       def message_from(response)
-        return response['Errors'][0]['Message'] unless success?(response)
-        "Success"
-      end
-
-      def parse(response)
-        {
-          :ok => response['Ok'],
-          :error_code => response['Errors'][0]['Code'],
-          :error_message => response['Errors'][0]['Message'],
-          :authorization => response['Data']['ConfirmationNumber'],
-          :complete => response
-        }
+        response['Errors'][0]['Message']
       end
 
       def success?(response)
-        response['Ok'] == 'Ok'
+        response['Ok'] == '1'
       end
 
     end

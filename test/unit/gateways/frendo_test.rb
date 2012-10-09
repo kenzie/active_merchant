@@ -9,12 +9,17 @@ class FrendoTest < Test::Unit::TestCase
 
     @credit_card = credit_card
     @amount = 100
+
+    @options = {
+      :address => { :address1 => '123 Main St.', :city => 'Southwest Mabou', :state => 'Nova Scotia', :zip => 'B0E 2W0', :country => 'CN' },
+      :user => { :first_name => 'John', :last_name => 'Doe', :phone => '9025551212', :email => 'john.doe@example.com', :ip => '123.123.123.123' }
+    }
   end
 
   def test_successful_purchase
     @gateway.expects(:ssl_post).returns(successful_purchase_response)
 
-    assert response = @gateway.purchase(@amount, @credit_card)
+    assert response = @gateway.purchase(@amount, @credit_card, @options)
     assert_instance_of Response, response
     assert_success response
 
@@ -26,7 +31,7 @@ class FrendoTest < Test::Unit::TestCase
   def test_unsuccessful_request
     @gateway.expects(:ssl_post).returns(failed_purchase_response)
 
-    assert response = @gateway.purchase(@amount, @credit_card)
+    assert response = @gateway.purchase(@amount, @credit_card, @options)
     assert_failure response
     assert response.test?
   end

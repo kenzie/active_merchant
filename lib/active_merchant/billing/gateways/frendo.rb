@@ -61,18 +61,18 @@ module ActiveMerchant #:nodoc:
 
       def add_invoice(post, money)
         post['Order'] = {}
-        post['Order']['Amount']   = money
+        post['Order']['Amount']        = money
         post['Order']['OrderDate']     = Time.now.strftime('%Y/%m/%d')
         post['Order']['OrderType']     = 'CC'
       end
 
       def add_user(post, options)
         post['UserInfo'] = {}
-        post['UserInfo']['FirstName']     = 'John'
-        post['UserInfo']['LastName']      = 'Doe'
-        post['UserInfo']['PhoneNumber']   = '9025551212'
-        post['UserInfo']['Email']         = 'john.doe@example.com'
-        post['UserInfo']['HostAddress']   = '123.123.123.123'
+        post['UserInfo']['FirstName']     = options[:user][:first_name]
+        post['UserInfo']['LastName']      = options[:user][:last_name]
+        post['UserInfo']['PhoneNumber']   = options[:user][:phone]
+        post['UserInfo']['Email']         = options[:user][:email]
+        post['UserInfo']['HostAddress']   = options[:user][:ip]
       end
 
       def commit(action, parameters)

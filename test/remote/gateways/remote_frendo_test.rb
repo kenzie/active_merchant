@@ -12,7 +12,8 @@ class RemoteFrendoTest < Test::Unit::TestCase
     @declined_card = credit_card('4715320629000001', { :year => 2010 })
 
     @options = {
-      :address => { :address1 => '123 Main St.', :city => 'Southwest Mabou', :state => 'Nova Scotia', :zip => 'B0E 2W0', :country => 'CN' }
+      :address => { :address1 => '123 Main St.', :city => 'Southwest Mabou', :state => 'Nova Scotia', :zip => 'B0E 2W0', :country => 'CN' },
+      :user => { :first_name => 'John', :last_name => 'Doe', :phone => '9025551212', :email => 'john.doe@example.com', :ip => '123.123.123.123' }
     }
   end
 

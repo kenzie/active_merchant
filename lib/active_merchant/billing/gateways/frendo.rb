@@ -61,7 +61,7 @@ module ActiveMerchant #:nodoc:
 
       def add_invoice(post, money)
         post['Order'] = {}
-        post['Order']['Amount']               = money
+        post['Order']['Amount']               = '%.2f' % (money.to_i/100.0) # convert cents to dollar string
         post['Order']['OrderDate']            = Time.now.strftime('%Y/%m/%d')
         post['Order']['OrderType']            = 'CC'
       end

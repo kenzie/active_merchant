@@ -23,7 +23,6 @@ class FrendoTest < Test::Unit::TestCase
     assert_instance_of Response, response
     assert_success response
 
-    # Replace with authorization number from the successful response
     assert_equal '12345678901', response.authorization
     assert response.test?
   end
@@ -38,12 +37,10 @@ class FrendoTest < Test::Unit::TestCase
 
   private
 
-  # Place raw successful response from gateway here
   def successful_purchase_response
     "{\"Ok\":\"1\",\"Errors\":[{\"Message\":\"No errors\",\"Code\":\"0\"}],\"Data\":{\"ConfirmationNumber\":\"12345678901\"}}"
   end
 
-  # Place raw failed response from gateway here
   def failed_purchase_response
     "{\"Ok\":\"0\",\"Errors\":[{\"Message\":\"An internal error occurred. Please retry the transaction.\",\"Code\":\"1000\"}],\"Data\":null}"
   end

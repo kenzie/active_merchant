@@ -57,14 +57,13 @@ module ActiveMerchant #:nodoc:
         post['BillingAddress']['Country']     = 'CN'
       end
 
-      def add_credit_card(post, options)
+      def add_credit_card(post, creditcard)
         post['CreditCard'] = {}
-        post['CreditCard']['CardType']        = 'VI'
-        post['CreditCard']['CardNumber']      = '4715320629000001'
-        post['CreditCard']['CardholderName']  = 'Doe, John'
-        post['CreditCard']['ExpiryMonth']     = '01'
-        post['CreditCard']['ExpiryYear']      = '2016'
-        post['CreditCard']['Cvv']             = '111'
+        post['CreditCard']['CardNumber']      = creditcard.number
+        post['CreditCard']['CardholderName']  = "#{creditcard.first_name} #{creditcard.last_name}"
+        post['CreditCard']['ExpiryMonth']     = creditcard.month
+        post['CreditCard']['ExpiryYear']      = creditcard.year
+        post['CreditCard']['Cvv']             = creditcard.verification_value if creditcard.verification_value?
       end
 
       def add_invoice(post, money)

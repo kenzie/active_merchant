@@ -28,13 +28,4 @@ class RemoteFrendoTest < Test::Unit::TestCase
     assert_equal 'You submitted an expired credit card number with your request. Please verify this parameter and retry the request.', response.message
   end
 
-  # def test_invalid_login
-  #   gateway = FrendoGateway.new(
-  #               :login => '',
-  #               :password => ''
-  #             )
-  #   assert response = gateway.purchase(@amount, @credit_card, @options)
-  #   assert_failure response
-  #   assert_equal 'REPLACE WITH FAILURE MESSAGE', response.message
-  # end
 end

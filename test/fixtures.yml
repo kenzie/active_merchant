@@ -121,6 +121,10 @@ first_pay:
   login:
   password:
 
+frendo:
+  login:
+  password:
+
 garanti:
   login: "PROVAUT"
   terminal_id: 111995

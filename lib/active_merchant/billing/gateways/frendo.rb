@@ -23,32 +23,18 @@ module ActiveMerchant #:nodoc:
         add_address(post, options)
         add_credit_card(post, creditcard)
         add_invoice(post, money)
-        add_user(post, options)
+        add_customer(post, options)
 
         commit('order.create', post)
       end
 
-      def store(credit_card, options = {})
+      def store(creditcard, options = {})
         post = {}
-        post[:pan] = credit_card.number
-        post[:expdate] = expdate(credit_card)
-        post[:crypt_type] = options[:crypt_type] || @options[:crypt_type]
-        commit('res_add_cc', post)
-      end
+        add_address(post, options)
+        add_credit_card(post, creditcard)
+        add_customer(post, options)
 
-      def unstore(data_key)
-        post = {}
-        post[:data_key] = data_key
-        commit('res_delete', post)
-      end
-
-      def update(data_key, credit_card, options = {})
-        post = {}
-        post[:pan] = credit_card.number
-        post[:expdate] = expdate(credit_card)
-        post[:data_key] = data_key
-        post[:crypt_type] = options[:crypt_type] || @options[:crypt_type]
-        commit('res_update_cc', post)
+        commit('creditcard.add', post)
       end
 
       private
@@ -89,13 +75,14 @@ module ActiveMerchant #:nodoc:
         post['Order']['OrderType']            = 'CC'
       end
 
-      def add_user(post, options)
+      def add_customer(post, options)
         post['UserInfo'] = {}
         post['UserInfo']['FirstName']         = options[:customer][:first_name]
         post['UserInfo']['LastName']          = options[:customer][:last_name]
         post['UserInfo']['PhoneNumber']       = options[:customer][:phone]
         post['UserInfo']['Email']             = options[:customer][:email]
         post['UserInfo']['HostAddress']       = options[:customer][:ip]
+        post['UserInfo']['AccountNumber']     = options[:customer][:account_number]
       end
 
       def commit(action, parameters)
@@ -122,7 +109,14 @@ module ActiveMerchant #:nodoc:
       end
 
       def brand(creditcard)
-        return 'VI' if creditcard.brand == 'visa'
+        case creditcard.brand
+        when 'visa'
+          'VI'
+        when 'master'
+          'MC'
+        else
+          'VI'
+        end
       end
 
     end

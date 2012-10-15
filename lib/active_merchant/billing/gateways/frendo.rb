@@ -19,6 +19,7 @@ module ActiveMerchant #:nodoc:
 
       def purchase(money, creditcard, options = {})
         post = {}
+        add_authentication(post)
         add_charity_type(post)
         add_address(post, options)
         add_credit_card(post, creditcard)
@@ -30,11 +31,30 @@ module ActiveMerchant #:nodoc:
 
       def store(creditcard, options = {})
         post = {}
+        add_authentication(post)
         add_address(post, options)
         add_credit_card(post, creditcard)
         add_customer(post, options)
 
         commit('creditcard.add', post)
+      end
+
+      def unstore(options)
+        post = {}
+        add_authentication(post)
+        add_customer(post, options)
+
+        commit('creditcard.remove', post)
+      end
+
+      def update(creditcard, options)
+        post = {}
+        add_authentication(post)
+        add_address(post, options)
+        add_credit_card(post, creditcard)
+        add_customer(post, options)
+
+        commit('creditcard.update', post)
       end
 
       private
@@ -43,6 +63,12 @@ module ActiveMerchant #:nodoc:
         post['Charity'] = {}
         post['Charity']['Type'] = "Charity"
         post['Charity']['Id']   = "2"
+      end
+
+      def add_authentication(post)
+        post['Authentication'] = {}
+        post['Authentication']['Username'] = @options[:login]
+        post['Authentication']['Password'] = @options[:password]
       end
 
       def add_address(post, options)

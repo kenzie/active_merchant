@@ -30,10 +30,26 @@ class RemoteFrendoTest < Test::Unit::TestCase
   end
 
   def test_successful_store
-    # TODO failing because of unknown missing submission data
     assert response = @gateway.store(@credit_card, @options)
     assert_success response
     assert_equal 'No errors', response.message
+    assert_not_nil @account_number = response.params["Data"]["CustomerCode"]
+  end
+
+  def test_successful_unstore
+    test_successful_store
+    @options[:customer][:account_number] = @account_number
+    assert response = @gateway.unstore(@options)
+    assert_success response
+    assert_equal "No errors", response.message
+  end
+
+  def test_successful_update
+    test_successful_store
+    @options[:customer][:account_number] = @account_number
+    assert response = @gateway.update(@credit_card, @options)
+    assert_success response
+    assert_equal "No errors", response.message
   end
 
 end

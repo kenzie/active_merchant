@@ -48,9 +48,31 @@ class FrendoTest < Test::Unit::TestCase
     assert response = @gateway.store(@credit_card, @options)
     assert_success response
     assert_equal "No errors", response.message
-    assert response.params["Data"]["AccountNumber"].present?
-    assert_equal '12345678901', response.params["Data"]["AccountNumber"]
-    @account_number = response.params["Data"]["AccountNumber"]
+    assert response.params["Data"]["CustomerCode"].present?
+    assert_equal '12345678901', response.params["Data"]["CustomerCode"]
+    @account_number = response.params["Data"]["CustomerCode"]
+  end
+
+  def test_successful_unstore
+    @gateway.expects(:ssl_post).returns(successful_unstore_response)
+
+    test_successful_store
+    @options[:customer][:account_number] = @account_number
+    assert response = @gateway.unstore(@options)
+    assert_success response
+    assert_equal "No errors", response.message
+  end
+
+  def test_update
+    @gateway.expects(:ssl_post).returns(successful_update_response)
+
+    test_successful_store
+    assert response = @gateway.update(@credit_card, @options)
+    @options[:customer][:account_number] = @account_number
+    assert_success response
+    assert_equal "No errors", response.message
+    assert response.params["Data"]["CustomerCode"].present?
+    assert_equal '12345678901', response.params["Data"]["CustomerCode"]
   end
 
   private
@@ -64,7 +86,15 @@ class FrendoTest < Test::Unit::TestCase
   end
 
   def successful_store_response
-    "{\"Ok\":\"1\",\"Errors\":[{\"Message\":\"No errors\",\"Code\":\"0\"}],\"Data\":{\"AccountNumber\":\"12345678901\"}}"
+    "{\"Ok\":\"1\",\"Errors\":[{\"Message\":\"No errors\",\"Code\":\"0\"}],\"Data\":{\"CustomerCode\":\"12345678901\"}}"
+  end
+
+  def successful_unstore_response
+    "{\"Ok\":\"1\",\"Errors\":[{\"Message\":\"No errors\",\"Code\":\"0\"}],\"Data\":null}"
+  end
+
+  def successful_update_response
+    "{\"Ok\":\"1\",\"Errors\":[{\"Message\":\"No errors\",\"Code\":\"0\"}],\"Data\":{\"CustomerCode\":\"12345678901\"}}"
   end
 
 end

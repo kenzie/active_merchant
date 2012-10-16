@@ -49,7 +49,7 @@ class FrendoTest < Test::Unit::TestCase
     assert_success response
     assert_equal "No errors", response.message
     assert response.params["Data"]["CustomerCode"].present?
-    assert_equal '12345678901', response.params["Data"]["CustomerCode"]
+    assert_equal '12345678901', response.authorization
     @account_number = response.params["Data"]["CustomerCode"]
   end
 
@@ -72,7 +72,7 @@ class FrendoTest < Test::Unit::TestCase
     assert_success response
     assert_equal "No errors", response.message
     assert response.params["Data"]["CustomerCode"].present?
-    assert_equal '12345678901', response.params["Data"]["CustomerCode"]
+    assert_equal '12345678901', response.authorization
   end
 
   def test_successful_purchase_with_stored_card
@@ -82,7 +82,7 @@ class FrendoTest < Test::Unit::TestCase
     assert response = @gateway.purchase(100, @account_number, @options)
     assert_success response
     assert_equal "No errors", response.message
-    assert response.authorization.present?
+    assert_equal '12345678901', response.authorization
   end
 
   private

@@ -33,7 +33,7 @@ class RemoteFrendoTest < Test::Unit::TestCase
     assert response = @gateway.store(@credit_card, @options)
     assert_success response
     assert_equal 'No errors', response.message
-    assert_not_nil @account_number = response.params["Data"]["CustomerCode"]
+    assert_not_nil @account_number = response.authorization
   end
 
   def test_successful_unstore

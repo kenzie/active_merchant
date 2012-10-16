@@ -67,12 +67,22 @@ class FrendoTest < Test::Unit::TestCase
     @gateway.expects(:ssl_post).returns(successful_update_response)
 
     test_successful_store
-    assert response = @gateway.update(@credit_card, @options)
     @options[:customer][:account_number] = @account_number
+    assert response = @gateway.update(@credit_card, @options)
     assert_success response
     assert_equal "No errors", response.message
     assert response.params["Data"]["CustomerCode"].present?
     assert_equal '12345678901', response.params["Data"]["CustomerCode"]
+  end
+
+  def test_successful_purchase_with_stored_card
+    @gateway.expects(:ssl_post).returns(successful_purchase_response)
+
+    test_successful_store
+    assert response = @gateway.purchase(100, @account_number, @options)
+    assert_success response
+    assert_equal "No errors", response.message
+    assert response.authorization.present?
   end
 
   private

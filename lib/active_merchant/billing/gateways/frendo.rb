@@ -17,16 +17,12 @@ module ActiveMerchant #:nodoc:
         super
       end
 
-      def purchase(money, creditcard, options = {})
-        post = {}
-        add_authentication(post)
-        add_charity_type(post)
-        add_address(post, options)
-        add_credit_card(post, creditcard)
-        add_invoice(post, money)
-        add_customer(post, options)
-
-        commit('order.create', post)
+      def purchase(amount, creditcard_or_account_number, options)
+        if creditcard_or_account_number.is_a?(String)
+          purchase_with_account_number(amount, creditcard_or_account_number, options)
+        else
+          purchase_with_credit_card(amount, creditcard_or_account_number, options)
+        end
       end
 
       def store(creditcard, options = {})
@@ -58,6 +54,29 @@ module ActiveMerchant #:nodoc:
       end
 
       private
+
+      def purchase_with_credit_card(money, creditcard, options = {})
+        post = {}
+        add_authentication(post)
+        add_charity_type(post)
+        add_address(post, options)
+        add_invoice(post, money)
+        add_customer(post, options)
+        add_credit_card(post, creditcard)
+
+        commit('order.create', post)
+      end
+
+      def purchase_with_account_number(money, account_number, options = {})
+        post = {}
+        add_authentication(post)
+        add_charity_type(post)
+        add_invoice(post, money)
+        options[:customer][:account_number] = account_number
+        add_customer(post, options)
+
+        commit('order.createUend', post)
+      end
 
       def add_charity_type(post)
         post['Charity'] = {}
@@ -112,6 +131,7 @@ module ActiveMerchant #:nodoc:
       end
 
       def commit(action, parameters)
+        puts parameters.inspect
         response = JSON.parse(ssl_post(test? ? self.test_url+action : self.live_url+action, parameters.to_json))
 
         Response.new(success?(response),
@@ -127,7 +147,7 @@ module ActiveMerchant #:nodoc:
 
       def message_from(response)
         return response['Errors'][0]['Message'] if success?(response)
-        response['Errors'][0]['Message'].split('-').last.strip.chomp
+        response['Errors'][0]['Message'].split('-').last.try(:strip).try(:chomp)
       end
 
       def success?(response)

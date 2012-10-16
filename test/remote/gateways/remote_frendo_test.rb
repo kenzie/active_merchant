@@ -52,4 +52,11 @@ class RemoteFrendoTest < Test::Unit::TestCase
     assert_equal "No errors", response.message
   end
 
+  def test_successful_purchase_with_stored_card
+    test_successful_store
+    assert response = @gateway.purchase(@amount, @account_number, @options)
+    assert_success response
+    assert_equal "No errors", response.message
+  end
+
 end
